@@ -11,11 +11,37 @@ class input:
   
 import tkinter as tk
 from tkinter import ttk, scrolledtext
+import requests
+import json
 
-def process_input(input):
+def process_input(input): # capitalize the first letter (when necessary)
   split_inputs = input.split(',')
   output = [split_input.strip() for split_input in split_inputs]
+
   return output
+
+def create_search_query(input):
+  coresignalURL = "https://api.coresignal.com/cdapi/v2/employee_base/search/filter"
+
+  payload = json.dumps({
+    "location": input.location,
+    "experience_title": input.job_title,
+    "experience_company_name": input.company,
+    "education_program_name": input.major,
+    "education_institution_name": input.education_institution,
+    "skill": input.skills
+  })
+
+  headers = {
+      'accept': 'application/json',
+      'Content-Type': 'application/json',
+      'apikey': 'api_key'
+  }
+
+  response = requests.request("POST", coresignalURL, headers=headers, data=payload)
+
+  print(response.text)
+  return
 
 def run_profile_finder():
   window = tk.Tk()
@@ -77,7 +103,7 @@ def run_profile_finder():
     currInput.education_institution = education
     currInput.skills = skills
 
-    # CALL SEARCH PROFILE FUNCTION HERE
+    response = create_search_query(currInput)
 
     output_box.delete("1.0", tk.END)
 
@@ -96,7 +122,16 @@ def run_profile_finder():
   window.mainloop()
   
 def main():
-  run_profile_finder()
+  test = input()
+  test.job_title = "Software Engineer"
+  test.location = "New York"
+  test.company = "Google"
+  test.years_of_experience = "3"
+  test.degree = "Bachelor's"
+  test.major = "Computer Science"
+  test.education_institution = "Carnegie Mellon University"
+  test.skills = "C++"
+  create_search_query(test)
 
 if __name__ == "__main__":
   main()
