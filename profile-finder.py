@@ -21,21 +21,98 @@ def process_input(input): # capitalize the first letter (when necessary)
   return output
 
 def create_search_query(input):
-  coresignalURL = "https://api.coresignal.com/cdapi/v2/employee_base/search/filter"
+  coresignalURL = "https://api.coresignal.com/cdapi/v2/employee_base/search/es_dsl"
 
   payload = json.dumps({
-    "location": input.location,
-    "experience_title": input.job_title,
-    "experience_company_name": input.company,
-    "education_program_name": input.major,
-    "education_institution_name": input.education_institution,
-    "skill": input.skills
+    "query": {
+      "bool": {
+        "must": [
+          {
+            "term": {
+              "is_parent": 1
+            }
+          },
+          {
+            "term": {
+              "deleted": 0
+            }
+          },
+          {
+            "match": {
+              "location": input.location
+            }
+          },
+          {
+            "nested": {
+              "path": "experience",
+              "query": {
+                "bool": {
+                  "must": [
+                    {
+                      "match": {
+                        "experience.company_name": input.company
+                      }
+                    },
+                    {
+                      "match": {
+                        "experience.title": input.job_title
+                      }
+                    },
+                    {
+                      "term": {
+                        "experience.deleted": 0
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "nested": {
+              "path": "education",
+              "query": {
+                "bool": {
+                  "must": [
+                    {
+                      "match": {
+                        "education.institution": input.education_institution
+                      }
+                    },
+                    {
+                      "match": {
+                        "education.program":input.major
+                      }
+                    },
+                    {
+                      "term": {
+                        "education.deleted": 0
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "nested": {
+              "path": "skills",
+              "query": {
+                "match": {
+                  "skills.skill": input.skills
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
   })
 
   headers = {
       'accept': 'application/json',
       'Content-Type': 'application/json',
-      'apikey': 'api_key'
+      'apikey': 'lDIWfl32thDy12HTg64rsyY9vEmHGW1M'
   }
 
   response = requests.request("POST", coresignalURL, headers=headers, data=payload)
