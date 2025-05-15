@@ -29,10 +29,10 @@ def calculate_yoe(profileDict):
   for experience in profileDict["experience"]:
     if experience["deleted"] == 0:
       if experience["date_to"] != None:
-        total_yoe += experience["duration"]
+        total_yoe += int(experience["duration"])
       else:
         currentYear = date.today().year
-        total_yoe += (currentYear - experience["date_from_year"])
+        total_yoe += (currentYear - int(experience["date_from_year"]))
   
   return total_yoe
 
@@ -148,13 +148,10 @@ def call_coresignal_search_api(input):
     }
   })
 
-  print("payload: ", payload)
-  print("payload is above\n")
-
   headers = {
       'accept': 'application/json',
       'Content-Type': 'application/json',
-      'apikey': 'api-key'
+      'apikey': 'lDIWfl32thDy12HTg64rsyY9vEmHGW1M'
   }
 
   response = requests.request("POST", coresignalURL, headers=headers, data=payload)
@@ -166,7 +163,7 @@ def call_coresignal_collect_api(profile_id):
 
   headers = {
       'accept': 'application/json',
-      'apikey': 'api-key'
+      'apikey': 'lDIWfl32thDy12HTg64rsyY9vEmHGW1M'
   }
 
   response = requests.request("GET", coresignalURL, headers=headers)
@@ -223,6 +220,8 @@ def run_profile_finder():
     # education = process_input(education_entry.get())
     # skills = process_input(skills_entry.get())
 
+    output_box.delete("1.0", tk.END)
+
     job_title = job_title_entry.get()
     location = location_entry.get()
     company =  company_entry.get()
@@ -251,26 +250,28 @@ def run_profile_finder():
 
     responseDict = json.loads(collectResponse)
 
-    print()
-    print(responseDict)
-    print()
-    print(responseDict["experience"])
-    print()
-    print(responseDict["education"])
-    print()
-    print(responseDict["skills"])
-    print()
+    if (responseDict.get("message", "all good") != "all good"):
+      output_box.insert(tk.END, "No matching profiles found.")
+      return
 
-    output_box.delete("1.0", tk.END)
+    # print()
+    # print(responseDict)
+    # print()
+    # print(responseDict["experience"])
+    # print()
+    # print(responseDict["education"])
+    # print()
+    # print(responseDict["skills"])
+    # print()
 
     output_box.insert(tk.END, f"Full Name: {responseDict["full_name"]}\n\n")
     output_box.insert(tk.END, f"Profile Link: {responseDict["profile_url"]}\n\n")
     output_box.insert(tk.END, f"Location: {responseDict["location"]}\n\n")
 
-    # output_box.insert(tk.END, f"Years of Experience: {years_of_experience}\n")
+    # output_box.insert(tk.END, f"Years of Experience: {calculate_yoe(responseDict)}\n")
 
     for experience in responseDict["experience"]:
-      if (experience["deleted"] == 0) and (company in experience["company_name"]): # might want to normalize all strings before doing this (all lowercase, remove spaces)
+      if (experience["deleted"] == 0) and (company.lower().replace(" ", "") in experience["company_name"].lower().replace(" ", "")): # might want to normalize all strings before doing this (all lowercase, remove spaces)
         if experience["date_to"] != None:
           if experience["date_from"] == None:
             output_box.insert(tk.END, f"Company: {experience["company_name"]} (unknown - {experience["date_to"]})\n")
@@ -289,7 +290,7 @@ def run_profile_finder():
     # output_box.insert(tk.END, f"Degree: {degree}\n")
 
     for education in responseDict["education"]:
-      if (education["deleted"] == 0) and (education_institution in education["institution"]): # might want to normalize all strings before doing this (all lowercase, remove spaces)
+      if (education["deleted"] == 0) and (education_institution.lower().replace(" ", "") in education["institution"].lower().replace(" ", "")): # might want to normalize all strings before doing this (all lowercase, remove spaces)
         if education["date_to"] != None:
           if education["date_from"] == None:
             output_box.insert(tk.END, f"Education Institution: {education["institution"]} (unknown - {education["date_to"]})\n")
