@@ -1,3 +1,11 @@
+# from utils import build_elasticsearch_query
+import tkinter as tk
+from tkinter import ttk, scrolledtext
+from datetime import date
+import requests
+import json
+
+
 class input:
   def __init__(self):
     self.job_title = ""
@@ -8,11 +16,6 @@ class input:
     self.major = ""
     self.education_institution = ""
     self.skills = ""
-  
-import tkinter as tk
-from tkinter import ttk, scrolledtext
-import requests
-import json
 
 def process_input(input): # capitalize the first letter (when necessary)
   split_inputs = input.split(',')
@@ -20,8 +23,35 @@ def process_input(input): # capitalize the first letter (when necessary)
 
   return output
 
-def create_search_query(input):
+def calculate_yoe(profileDict):
+  total_yoe = 0
+
+  for experience in profileDict["experience"]:
+    if experience["deleted"] == 0:
+      if experience["date_to"] != None:
+        total_yoe += experience["duration"]
+      else:
+        currentYear = date.today().year
+        total_yoe += (currentYear - experience["date_from_year"])
+  
+  return total_yoe
+
+def filter_by_yoe(yoe_requirement, profiles):
+  result = [];
+
+  for profile in profiles:
+    yoe = calculate_yoe(profile)
+    if (yoe >= yoe_requirement):
+      result.append(profile)
+  
+  return result
+
+
+def call_coresignal_search_api(input):
   coresignalURL = "https://api.coresignal.com/cdapi/v2/employee_base/search/es_dsl"
+
+  # input_dict = input.__dict__
+  # payload = json.dumps(build_elasticsearch_query(input_dict))
 
   payload = json.dumps({
     "query": {
@@ -81,7 +111,7 @@ def create_search_query(input):
                     },
                     {
                       "match": {
-                        "education.program":input.major
+                        "education.program": input.major
                       }
                     },
                     {
@@ -98,8 +128,14 @@ def create_search_query(input):
             "nested": {
               "path": "skills",
               "query": {
-                "match": {
-                  "skills.skill": input.skills
+                "bool": {
+                  "must": [
+                    {
+                      "match": {
+                        "skills.skill": input.skills
+                      }
+                    }
+                  ]
                 }
               }
             }
@@ -109,16 +145,30 @@ def create_search_query(input):
     }
   })
 
+  print("payload: ", payload)
+  print("payload is above\n")
+
   headers = {
       'accept': 'application/json',
       'Content-Type': 'application/json',
-      'apikey': 'lDIWfl32thDy12HTg64rsyY9vEmHGW1M'
+      'apikey': 'api_key'
   }
 
   response = requests.request("POST", coresignalURL, headers=headers, data=payload)
 
-  print(response.text)
-  return
+  return response.text
+
+def call_coresignal_collect_api(profile_id):
+  coresignalURL = "https://api.coresignal.com/cdapi/v2/employee_base/collect/" + profile_id
+
+  headers = {
+      'accept': 'application/json',
+      'apikey': 'api_key'
+  }
+
+  response = requests.request("GET", coresignalURL, headers=headers)
+
+  return response.text
 
 def run_profile_finder():
   window = tk.Tk()
@@ -160,15 +210,24 @@ def run_profile_finder():
   output_box.grid(column=0, row=9, columnspan=2, padx=5, pady=5)
 
   def on_search():
-    # note: these values below are arrays
-    job_title = process_input(job_title_entry.get())
-    location = process_input(location_entry.get())
-    company =  process_input(company_entry.get())
-    years_of_experience = process_input(yoe_entry.get())
-    degree = process_input(degree_entry.get())
-    major = process_input(major_entry.get())
-    education = process_input(education_entry.get())
-    skills = process_input(skills_entry.get())
+    # the values below are arrays
+    # job_title = process_input(job_title_entry.get())
+    # location = process_input(location_entry.get())
+    # company =  process_input(company_entry.get())
+    # years_of_experience = process_input(yoe_entry.get())
+    # degree = process_input(degree_entry.get())
+    # major = process_input(major_entry.get())
+    # education = process_input(education_entry.get())
+    # skills = process_input(skills_entry.get())
+
+    job_title = job_title_entry.get()
+    location = location_entry.get()
+    company =  company_entry.get()
+    years_of_experience = yoe_entry.get()
+    degree = degree_entry.get()
+    major = major_entry.get()
+    education = education_entry.get()
+    skills = skills_entry.get()
 
     currInput = input()
     currInput.job_title = job_title
@@ -180,18 +239,28 @@ def run_profile_finder():
     currInput.education_institution = education
     currInput.skills = skills
 
-    response = create_search_query(currInput)
+    searchResponse = call_coresignal_search_api(currInput)
+
+    searchResponse = searchResponse[1:len(searchResponse) - 1]
+    searchResponse = searchResponse.split(",")
+
+    collectResponse = call_coresignal_collect_api(searchResponse[0])
+
+    responseDict = json.loads(collectResponse)
+
+    print(collectResponse)
 
     output_box.delete("1.0", tk.END)
 
-    output_box.insert(tk.END, f"Job Title: {job_title}\n")
-    output_box.insert(tk.END, f"Location: {location}\n")
-    output_box.insert(tk.END, f"Company: {company}\n")
-    output_box.insert(tk.END, f"Years of Experience: {years_of_experience}\n")
-    output_box.insert(tk.END, f"Degree: {degree}\n")
-    output_box.insert(tk.END, f"Major: {major}\n")
-    output_box.insert(tk.END, f"Education Institution: {education}\n")
-    output_box.insert(tk.END, f"Skills: {skills}\n")
+    output_box.insert(tk.END, f"Full Name: {responseDict["full_name"]}\n")
+    output_box.insert(tk.END, f"Profile Link: {responseDict["profile_url"]}\n")
+    output_box.insert(tk.END, f"Location: {responseDict["location"]}\n")
+    output_box.insert(tk.END, f"Company: {responseDict["experience"][0]["company_name"]}\n")
+    # output_box.insert(tk.END, f"Years of Experience: {years_of_experience}\n")
+    # output_box.insert(tk.END, f"Degree: {degree}\n")
+    output_box.insert(tk.END, f"Major: {responseDict["education"][0]["program"]}\n") # same as below
+    output_box.insert(tk.END, f"Education Institution: {responseDict["education"][0]["institution"]}\n") # take the one with the newest date_to/date_to_year (it could also be null for current educations)
+    output_box.insert(tk.END, f"Skills: {responseDict["skills"][0]["skill"]}\n")
   
   search_button = ttk.Button(window, text="Search", command=on_search)
   search_button.grid(column=0, row=8, columnspan=2, pady=10)
@@ -208,7 +277,9 @@ def main():
   test.major = "Computer Science"
   test.education_institution = "Carnegie Mellon University"
   test.skills = "C++"
-  create_search_query(test)
+  # call_coresignal_search_api(test)
+
+  run_profile_finder()
 
 if __name__ == "__main__":
   main()
