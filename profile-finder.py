@@ -53,6 +53,9 @@ def call_coresignal_search_api(input):
   # input_dict = input.__dict__
   # payload = json.dumps(build_elasticsearch_query(input_dict))
 
+  # note: for experience and education, it is possible that the one in the search requirements isn't the first one in the profile
+  # so might need to find it
+
   payload = json.dumps({
     "query": {
       "bool": {
@@ -79,8 +82,8 @@ def call_coresignal_search_api(input):
                 "bool": {
                   "must": [
                     {
-                      "match": {
-                        "experience.company_name": input.company
+                      "match_phrase": {
+                        "experience.company_name": f"\"{input.company}\""
                       }
                     },
                     {
@@ -105,8 +108,8 @@ def call_coresignal_search_api(input):
                 "bool": {
                   "must": [
                     {
-                      "match": {
-                        "education.institution": input.education_institution
+                      "match_phrase": {
+                        "education.institution": f"\"{input.education_institution}\""
                       }
                     },
                     {
@@ -151,7 +154,7 @@ def call_coresignal_search_api(input):
   headers = {
       'accept': 'application/json',
       'Content-Type': 'application/json',
-      'apikey': 'api_key'
+      'apikey': 'api-key'
   }
 
   response = requests.request("POST", coresignalURL, headers=headers, data=payload)
@@ -163,7 +166,7 @@ def call_coresignal_collect_api(profile_id):
 
   headers = {
       'accept': 'application/json',
-      'apikey': 'api_key'
+      'apikey': 'api-key'
   }
 
   response = requests.request("GET", coresignalURL, headers=headers)
@@ -248,7 +251,12 @@ def run_profile_finder():
 
     responseDict = json.loads(collectResponse)
 
-    print(collectResponse)
+    print(responseDict["experience"])
+    print()
+    print(responseDict["education"])
+    print()
+    print(responseDict["skills"])
+    print()
 
     output_box.delete("1.0", tk.END)
 
