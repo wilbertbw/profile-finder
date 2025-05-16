@@ -5,7 +5,7 @@ import requests
 import json
 import os
 from query import build_elasticsearch_query
-from llm import call_LLM
+from llm import call_openai, call_gemini, call_groq
 
 def process_input(input):
   split_inputs = input.split(',')
@@ -168,7 +168,7 @@ def run_profile_finder():
     
     output_box.insert(tk.END, json.dumps(responseDict, indent=2))
 
-    response = call_LLM(prompt, json.dumps(responseDict, indent=2))
+    response = call_groq(prompt, json.dumps(responseDict, indent=2))
     llm_output_box.insert(tk.END, response)
 
     # print()
