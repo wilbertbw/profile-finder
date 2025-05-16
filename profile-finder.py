@@ -16,7 +16,7 @@ class input:
     self.education_institution = ""
     self.skills = ""
 
-def process_input(input): # capitalize the first letter (when necessary)
+def process_input(input):
   split_inputs = input.split(',')
   output = [split_input.strip() for split_input in split_inputs]
 
@@ -68,98 +68,6 @@ def call_coresignal_search_api(input):
 
   input_dict = input.__dict__
   payload = json.dumps(build_elasticsearch_query(input_dict))
-
-  # payload = json.dumps({
-  #   "query": {
-  #     "bool": {
-  #       "must": [
-  #         {
-  #           "term": {
-  #             "is_parent": 1
-  #           }
-  #         },
-  #         {
-  #           "term": {
-  #             "deleted": 0
-  #           }
-  #         },
-  #         {
-  #           "match": {
-  #             "location": input.location
-  #           }
-  #         },
-  #         {
-  #           "nested": {
-  #             "path": "experience",
-  #             "query": {
-  #               "bool": {
-  #                 "must": [
-  #                   {
-  #                     "match_phrase": {
-  #                       "experience.company_name": f"\"{input.company}\""
-  #                     }
-  #                   },
-  #                   {
-  #                     "match": {
-  #                       "experience.title": input.job_title
-  #                     }
-  #                   },
-  #                   {
-  #                     "term": {
-  #                       "experience.deleted": 0
-  #                     }
-  #                   }
-  #                 ]
-  #               }
-  #             }
-  #           }
-  #         },
-  #         {
-  #           "nested": {
-  #             "path": "education",
-  #             "query": {
-  #               "bool": {
-  #                 "must": [
-  #                   {
-  #                     "match_phrase": {
-  #                       "education.institution": f"\"{input.education_institution}\""
-  #                     }
-  #                   },
-  #                   {
-  #                     "match": {
-  #                       "education.program": input.major
-  #                     }
-  #                   },
-  #                   {
-  #                     "term": {
-  #                       "education.deleted": 0
-  #                     }
-  #                   }
-  #                 ]
-  #               }
-  #             }
-  #           }
-  #         },
-  #         {
-  #           "nested": {
-  #             "path": "skills",
-  #             "query": {
-  #               "bool": {
-  #                 "must": [
-  #                   {
-  #                     "match": {
-  #                       "skills.skill": input.skills
-  #                     }
-  #                   }
-  #                 ]
-  #               }
-  #             }
-  #           }
-  #         }
-  #       ]
-  #     }
-  #   }
-  # })
 
   headers = {
       'accept': 'application/json',
