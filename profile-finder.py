@@ -129,16 +129,6 @@ def run_profile_finder():
   llm_output_box.grid(column=2, row=9, columnspan=2, padx=5, pady=5)
 
   def on_search():
-    # the values below are arrays
-    # job_title = process_input(job_title_entry.get())
-    # location = process_input(location_entry.get())
-    # company =  process_input(company_entry.get())
-    # years_of_experience = process_input(yoe_entry.get())
-    # degree = process_input(degree_entry.get())
-    # major = process_input(major_entry.get())
-    # education = process_input(education_entry.get())
-    # skills = process_input(skills_entry.get())
-
     output_box.delete("1.0", tk.END)
 
     job_title = job_title_entry.get()
@@ -183,60 +173,6 @@ def run_profile_finder():
     # print()
     # print(responseDict)
     # print()
-
-    # output_box.insert(tk.END, f"Full Name: {responseDict["full_name"]}\n\n")
-    # output_box.insert(tk.END, f"Profile Link: {responseDict["profile_url"]}\n\n")
-    # output_box.insert(tk.END, f"Location: {responseDict["location"]}\n\n")
-    # output_box.insert(tk.END, "Years of Experience: {:.2f}\n\n".format(calculate_yoe(responseDict)))
-
-    # for experience in responseDict["experience"]:
-    #   if (experience["deleted"] == 0) and (company.lower().replace(" ", "") in experience["company_name"].lower().replace(" ", "")):
-    #     if experience["date_to"] != None:
-    #       if experience["date_from"] == None:
-    #         output_box.insert(tk.END, f"Company: {experience["company_name"]} (unknown - {experience["date_to"]})\n")
-    #         output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
-    #       else:
-    #         output_box.insert(tk.END, f"Company: {experience["company_name"]} ({experience["date_from"]} - {experience["date_to"]})\n")
-    #         output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
-    #     else:
-    #       if experience["date_from"] == None:
-    #         output_box.insert(tk.END, f"Company: {experience["company_name"]} (unknown)\n")
-    #         output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
-    #       else:
-    #         output_box.insert(tk.END, f"Company: {experience["company_name"]} ({experience["date_from"]} - present)\n")
-    #         output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
-
-    # # output_box.insert(tk.END, f"Degree: {degree}\n")
-
-    # for education in responseDict["education"]:
-    #   if (education["deleted"] == 0) and (education_institution.lower().replace(" ", "") in education["institution"].lower().replace(" ", "")):
-    #     if education["date_to"] != None:
-    #       if education["date_from"] == None:
-    #         output_box.insert(tk.END, f"Education Institution: {education["institution"]} (unknown - {education["date_to"]})\n")
-    #         output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
-    #       else:
-    #         output_box.insert(tk.END, f"Education Institution: {education["institution"]} ({education["date_from"]} - {education["date_to"]})\n")
-    #         output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
-    #     else:
-    #       if education["date_from"] == None:
-    #         output_box.insert(tk.END, f"Education Institution: {education["institution"]} (unknown)\n")
-    #         output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
-    #       else:
-    #         output_box.insert(tk.END, f"Education Institution: {education["institution"]} ({education["date_from"]} - present)\n")
-    #         output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
-    
-    # skill_str = "Skills: "
-    # for i in range(len(responseDict["skills"])):
-    #   curr_skill = responseDict["skills"][i]
-
-    #   if (curr_skill["deleted"] == 1):
-    #     skill_str += curr_skill["skill"]
-    #     if (i != len(responseDict["skills"]) - 1):
-    #       skill_str += ", "
-    #     else:
-    #       skill_str += "\n"
-
-    # output_box.insert(tk.END, skill_str)
   
   def on_submit():
     prompt = prompt_entry.get()
