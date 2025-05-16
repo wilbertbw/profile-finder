@@ -6,8 +6,6 @@ import json
 from query import build_elasticsearch_query
 from llm import call_LLM
 
-output_profile = ""
-
 def process_input(input):
   split_inputs = input.split(',')
   output = [split_input.strip() for split_input in split_inputs]
@@ -118,9 +116,9 @@ def run_profile_finder():
   skills_entry = ttk.Entry(window, width=40)
   skills_entry.grid(column=1, row=7, padx=5, pady=5)
 
-  ttk.Label(window, text="Prompt:", font=(24)).grid(column=2, row=0, sticky=tk.W, padx=5, pady=5)
-  prompt_entry = ttk.Entry(window, width=40)
-  prompt_entry.grid(column=3, row=0, padx=5, pady=5)
+  ttk.Label(window, text="Prompt:", font=(24)).grid(column=2, row=3, sticky=tk.W, padx=5, pady=5)
+  text_area = tk.Text(window, width=54, height=4)
+  text_area.grid(column=3, row=3, sticky=tk.W, padx=5, pady=5)
 
   output_box = scrolledtext.ScrolledText(window, width=84, height=22)
   output_box.grid(column=0, row=9, columnspan=2, padx=5, pady=5)
@@ -128,8 +126,9 @@ def run_profile_finder():
   llm_output_box = scrolledtext.ScrolledText(window, width=72, height=22)
   llm_output_box.grid(column=2, row=9, columnspan=2, padx=5, pady=5)
 
-  def on_search():
+  def on_submit():
     output_box.delete("1.0", tk.END)
+    llm_output_box.delete("1.0", tk.END)
 
     job_title = job_title_entry.get()
     location = location_entry.get()
@@ -139,6 +138,7 @@ def run_profile_finder():
     major = major_entry.get()
     education_institution = education_entry.get()
     skills = skills_entry.get()
+    prompt = text_area.get("1.0", tk.END)
 
     currInput = { # note: degree is not added here yet
       "job_title": job_title,
@@ -167,25 +167,17 @@ def run_profile_finder():
     
     output_box.insert(tk.END, json.dumps(responseDict, indent=2))
 
-    global output_profile
-    output_profile = json.dumps(responseDict, indent=2)
+    response = call_LLM(prompt, json.dumps(responseDict, indent=2))
+    llm_output_box.insert(tk.END, response)
 
     # print()
     # print(responseDict)
     # print()
-  
-  def on_submit():
-    prompt = prompt_entry.get()
-    llm_output_box.delete("1.0", tk.END)
 
-    response = call_LLM(prompt, output_profile)
-    llm_output_box.insert(tk.END, response)
+    
   
-  search_button = ttk.Button(window, text="Search", command=on_search)
-  search_button.grid(column=0, row=8, columnspan=2, pady=10)
-
-  submit_prompt_button = ttk.Button(window, text="Submit", command=on_submit)
-  submit_prompt_button.grid(column=2, row=8, columnspan=2, pady=10)
+  submit_button = ttk.Button(window, text="Submit", command=on_submit)
+  submit_button.grid(column=0, row=8, columnspan=4, pady=10)
 
   window.mainloop()
   
