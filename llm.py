@@ -1,10 +1,19 @@
-from google import genai
+from openai import OpenAI
+import os
+from dotenv import load_dotenv, find_dotenv
 
-client = genai.Client(api_key = "AIzaSyC3E9e_BjrYH2NojxLuugDpFD8JDAy5CDs")
+load_dotenv(find_dotenv())
+
+client = OpenAI(
+  api_key=os.environ.get("OPENAI_API_KEY")
+)
 
 def call_LLM(prompt, profile):
-  query = "Here is a person's profile: " + profile + "\n\n" + prompt
-  
-  response = client.models.generate_content(model = "gemini-2.0-flash", contents = query)
+  response = client.responses.create(
+    model="gpt-4o-mini",
+    input=[
+      {"role": "user", "content": "Here is a person's profile: " + profile + "\n\n" + prompt}
+    ]
+  )
 
-  return response.text
+  return response.output_text

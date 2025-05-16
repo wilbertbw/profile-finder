@@ -3,6 +3,7 @@ from tkinter import ttk, scrolledtext
 from datetime import date
 import requests
 import json
+import os
 from query import build_elasticsearch_query
 from llm import call_LLM
 
@@ -61,7 +62,7 @@ def call_coresignal_search_api(input):
   headers = {
       'accept': 'application/json',
       'Content-Type': 'application/json',
-      'apikey': 'lDIWfl32thDy12HTg64rsyY9vEmHGW1M'
+      'apikey': os.environ.get("coresignal_api_key")
   }
 
   response = requests.request("POST", coresignalURL, headers=headers, data=payload)
@@ -73,7 +74,7 @@ def call_coresignal_collect_api(profile_id):
 
   headers = {
       'accept': 'application/json',
-      'apikey': 'lDIWfl32thDy12HTg64rsyY9vEmHGW1M'
+      'apikey': os.environ.get("coresignal_api_key")
   }
 
   response = requests.request("GET", coresignalURL, headers=headers)
