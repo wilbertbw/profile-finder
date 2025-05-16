@@ -1,15 +1,10 @@
-from openai import OpenAI
+from google import genai
 
-client = OpenAI(
-  api_key="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"
-)
+client = genai.Client(api_key = "AIzaSyC3E9e_BjrYH2NojxLuugDpFD8JDAy5CDs")
 
 def call_LLM(prompt, profile):
-  response = client.responses.create(
-    model="gpt-4o-mini",
-    input=[
-      {"role": "user", "content": "Here is a person's profile: " + profile + "\n\n" + prompt}
-    ]
-  )
+  query = "Here is a person's profile: " + profile + "\n\n" + prompt
+  
+  response = client.models.generate_content(model = "gemini-2.0-flash", contents = query)
 
-  return response.output_text
+  return response.text
