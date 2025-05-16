@@ -1,10 +1,9 @@
-# from utils import build_elasticsearch_query
 import tkinter as tk
 from tkinter import ttk, scrolledtext
 from datetime import date
 import requests
 import json
-
+from query import build_elasticsearch_query
 
 class input:
   def __init__(self):
@@ -23,16 +22,33 @@ def process_input(input): # capitalize the first letter (when necessary)
 
   return output
 
-def calculate_yoe(profileDict):
+def calculate_yoe(profileDict): # not calculating it correctly --> only during nested? (e.g. multiple positions at same company)
   total_yoe = 0
 
   for experience in profileDict["experience"]:
     if experience["deleted"] == 0:
-      if experience["date_to"] != None:
-        total_yoe += int(experience["duration"])
+      if experience["date_to"] != None and experience["duration"] != None:
+        temp = experience["duration"].split(" ")
+        if (len(temp) == 4): # duration has years and months
+          years = int(temp[0])
+          months = int(temp[2])
+          months_in_years = months / 12.0
+          total_yoe = total_yoe + years + months_in_years
+        elif (len(temp) == 2): # duration has only months
+          months = int(temp[0])
+          months_in_years = months / 12.0
+          total_yoe += months_in_years
       else:
-        currentYear = date.today().year
-        total_yoe += (currentYear - int(experience["date_from_year"]))
+        if (experience["date_from_month"] != None):
+          current_date = date.today()
+          date_from = date(int(experience["date_from_year"]), int(experience["date_from_month"]), 1)
+          
+          years_diff = current_date.year - date_from.year
+          months_diff = current_date.month - date_from.month
+
+          diff = years_diff + (months_diff / 12.0)
+          
+          total_yoe += diff
   
   return total_yoe
 
@@ -50,103 +66,100 @@ def filter_by_yoe(yoe_requirement, profiles):
 def call_coresignal_search_api(input):
   coresignalURL = "https://api.coresignal.com/cdapi/v2/employee_base/search/es_dsl"
 
-  # input_dict = input.__dict__
-  # payload = json.dumps(build_elasticsearch_query(input_dict))
+  input_dict = input.__dict__
+  payload = json.dumps(build_elasticsearch_query(input_dict))
 
-  # note: for experience and education, it is possible that the one in the search requirements isn't the first one in the profile
-  # so might need to find it
-
-  payload = json.dumps({
-    "query": {
-      "bool": {
-        "must": [
-          {
-            "term": {
-              "is_parent": 1
-            }
-          },
-          {
-            "term": {
-              "deleted": 0
-            }
-          },
-          {
-            "match": {
-              "location": input.location
-            }
-          },
-          {
-            "nested": {
-              "path": "experience",
-              "query": {
-                "bool": {
-                  "must": [
-                    {
-                      "match_phrase": {
-                        "experience.company_name": f"\"{input.company}\""
-                      }
-                    },
-                    {
-                      "match": {
-                        "experience.title": input.job_title
-                      }
-                    },
-                    {
-                      "term": {
-                        "experience.deleted": 0
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          {
-            "nested": {
-              "path": "education",
-              "query": {
-                "bool": {
-                  "must": [
-                    {
-                      "match_phrase": {
-                        "education.institution": f"\"{input.education_institution}\""
-                      }
-                    },
-                    {
-                      "match": {
-                        "education.program": input.major
-                      }
-                    },
-                    {
-                      "term": {
-                        "education.deleted": 0
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          {
-            "nested": {
-              "path": "skills",
-              "query": {
-                "bool": {
-                  "must": [
-                    {
-                      "match": {
-                        "skills.skill": input.skills
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
-      }
-    }
-  })
+  # payload = json.dumps({
+  #   "query": {
+  #     "bool": {
+  #       "must": [
+  #         {
+  #           "term": {
+  #             "is_parent": 1
+  #           }
+  #         },
+  #         {
+  #           "term": {
+  #             "deleted": 0
+  #           }
+  #         },
+  #         {
+  #           "match": {
+  #             "location": input.location
+  #           }
+  #         },
+  #         {
+  #           "nested": {
+  #             "path": "experience",
+  #             "query": {
+  #               "bool": {
+  #                 "must": [
+  #                   {
+  #                     "match_phrase": {
+  #                       "experience.company_name": f"\"{input.company}\""
+  #                     }
+  #                   },
+  #                   {
+  #                     "match": {
+  #                       "experience.title": input.job_title
+  #                     }
+  #                   },
+  #                   {
+  #                     "term": {
+  #                       "experience.deleted": 0
+  #                     }
+  #                   }
+  #                 ]
+  #               }
+  #             }
+  #           }
+  #         },
+  #         {
+  #           "nested": {
+  #             "path": "education",
+  #             "query": {
+  #               "bool": {
+  #                 "must": [
+  #                   {
+  #                     "match_phrase": {
+  #                       "education.institution": f"\"{input.education_institution}\""
+  #                     }
+  #                   },
+  #                   {
+  #                     "match": {
+  #                       "education.program": input.major
+  #                     }
+  #                   },
+  #                   {
+  #                     "term": {
+  #                       "education.deleted": 0
+  #                     }
+  #                   }
+  #                 ]
+  #               }
+  #             }
+  #           }
+  #         },
+  #         {
+  #           "nested": {
+  #             "path": "skills",
+  #             "query": {
+  #               "bool": {
+  #                 "must": [
+  #                   {
+  #                     "match": {
+  #                       "skills.skill": input.skills
+  #                     }
+  #                   }
+  #                 ]
+  #               }
+  #             }
+  #           }
+  #         }
+  #       ]
+  #     }
+  #   }
+  # })
 
   headers = {
       'accept': 'application/json',
@@ -242,6 +255,8 @@ def run_profile_finder():
     currInput.skills = skills
 
     searchResponse = call_coresignal_search_api(currInput)
+    
+    print(searchResponse)
 
     searchResponse = searchResponse[1:len(searchResponse) - 1]
     searchResponse = searchResponse.split(",")
@@ -267,11 +282,10 @@ def run_profile_finder():
     output_box.insert(tk.END, f"Full Name: {responseDict["full_name"]}\n\n")
     output_box.insert(tk.END, f"Profile Link: {responseDict["profile_url"]}\n\n")
     output_box.insert(tk.END, f"Location: {responseDict["location"]}\n\n")
-
-    # output_box.insert(tk.END, f"Years of Experience: {calculate_yoe(responseDict)}\n")
+    output_box.insert(tk.END, "Years of Experience: {:.2f}\n\n".format(calculate_yoe(responseDict)))
 
     for experience in responseDict["experience"]:
-      if (experience["deleted"] == 0) and (company.lower().replace(" ", "") in experience["company_name"].lower().replace(" ", "")): # might want to normalize all strings before doing this (all lowercase, remove spaces)
+      if (experience["deleted"] == 0) and (company.lower().replace(" ", "") in experience["company_name"].lower().replace(" ", "")):
         if experience["date_to"] != None:
           if experience["date_from"] == None:
             output_box.insert(tk.END, f"Company: {experience["company_name"]} (unknown - {experience["date_to"]})\n")
@@ -290,7 +304,7 @@ def run_profile_finder():
     # output_box.insert(tk.END, f"Degree: {degree}\n")
 
     for education in responseDict["education"]:
-      if (education["deleted"] == 0) and (education_institution.lower().replace(" ", "") in education["institution"].lower().replace(" ", "")): # might want to normalize all strings before doing this (all lowercase, remove spaces)
+      if (education["deleted"] == 0) and (education_institution.lower().replace(" ", "") in education["institution"].lower().replace(" ", "")):
         if education["date_to"] != None:
           if education["date_from"] == None:
             output_box.insert(tk.END, f"Education Institution: {education["institution"]} (unknown - {education["date_to"]})\n")
@@ -325,17 +339,6 @@ def run_profile_finder():
   window.mainloop()
   
 def main():
-  test = input()
-  test.job_title = "Software Engineer"
-  test.location = "New York"
-  test.company = "Google"
-  test.years_of_experience = "3"
-  test.degree = "Bachelor's"
-  test.major = "Computer Science"
-  test.education_institution = "Carnegie Mellon University"
-  test.skills = "C++"
-  # call_coresignal_search_api(test)
-
   run_profile_finder()
 
 if __name__ == "__main__":
