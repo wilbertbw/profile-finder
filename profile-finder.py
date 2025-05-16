@@ -5,17 +5,6 @@ import requests
 import json
 from query import build_elasticsearch_query
 
-class input:
-  def __init__(self):
-    self.job_title = ""
-    self.company = ""
-    self.years_of_experience = ""
-    self.location = ""
-    self.degree = ""
-    self.major = ""
-    self.education_institution = ""
-    self.skills = ""
-
 def process_input(input):
   split_inputs = input.split(',')
   output = [split_input.strip() for split_input in split_inputs]
@@ -66,8 +55,7 @@ def filter_by_yoe(yoe_requirement, profiles):
 def call_coresignal_search_api(input):
   coresignalURL = "https://api.coresignal.com/cdapi/v2/employee_base/search/es_dsl"
 
-  input_dict = input.__dict__
-  payload = json.dumps(build_elasticsearch_query(input_dict))
+  payload = json.dumps(build_elasticsearch_query(input))
 
   headers = {
       'accept': 'application/json',
@@ -144,6 +132,7 @@ def run_profile_finder():
     output_box.delete("1.0", tk.END)
 
     job_title = job_title_entry.get()
+    print(job_title_entry.get())
     location = location_entry.get()
     company =  company_entry.get()
     years_of_experience = yoe_entry.get()
@@ -152,15 +141,17 @@ def run_profile_finder():
     education_institution = education_entry.get()
     skills = skills_entry.get()
 
-    currInput = input()
-    currInput.job_title = job_title
-    currInput.location = location
-    currInput.company = company
-    currInput.years_of_experience = years_of_experience
-    # currInput.degree = degree
-    currInput.major = major
-    currInput.education_institution = education_institution
-    currInput.skills = skills
+    currInput = { # note: degree is not added here yet
+      "job_title": job_title,
+      "location": location,
+      "company": company,
+      "years_of_experience": years_of_experience,
+      "major": major,
+      "education_institution": education_institution,
+      "skills": skills
+    }
+
+    print('job_title: ', currInput.get('job_title'))
 
     searchResponse = call_coresignal_search_api(currInput)
     
