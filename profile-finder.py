@@ -4,6 +4,9 @@ from datetime import date
 import requests
 import json
 from query import build_elasticsearch_query
+from llm import call_LLM
+
+output_profile = ""
 
 def process_input(input):
   split_inputs = input.split(',')
@@ -115,8 +118,15 @@ def run_profile_finder():
   skills_entry = ttk.Entry(window, width=40)
   skills_entry.grid(column=1, row=7, padx=5, pady=5)
 
+  ttk.Label(window, text="Prompt:", font=(24)).grid(column=2, row=0, sticky=tk.W, padx=5, pady=5)
+  prompt_entry = ttk.Entry(window, width=40)
+  prompt_entry.grid(column=3, row=0, padx=5, pady=5)
+
   output_box = scrolledtext.ScrolledText(window, width=84, height=22)
   output_box.grid(column=0, row=9, columnspan=2, padx=5, pady=5)
+
+  llm_output_box = scrolledtext.ScrolledText(window, width=72, height=22)
+  llm_output_box.grid(column=2, row=9, columnspan=2, padx=5, pady=5)
 
   def on_search():
     # the values below are arrays
@@ -150,8 +160,6 @@ def run_profile_finder():
       "skills": skills
     }
 
-    print('job_title: ', currInput.get('job_title'))
-
     searchResponse = call_coresignal_search_api(currInput)
     
     print(searchResponse)
@@ -169,14 +177,11 @@ def run_profile_finder():
     
     output_box.insert(tk.END, json.dumps(responseDict, indent=2))
 
+    global output_profile
+    output_profile = json.dumps(responseDict, indent=2)
+
     # print()
     # print(responseDict)
-    # print()
-    # print(responseDict["experience"])
-    # print()
-    # print(responseDict["education"])
-    # print()
-    # print(responseDict["skills"])
     # print()
 
     # output_box.insert(tk.END, f"Full Name: {responseDict["full_name"]}\n\n")
@@ -233,8 +238,18 @@ def run_profile_finder():
 
     # output_box.insert(tk.END, skill_str)
   
+  def on_submit():
+    prompt = prompt_entry.get()
+    llm_output_box.delete("1.0", tk.END)
+
+    response = call_LLM(prompt, output_profile)
+    llm_output_box.insert(tk.END, response)
+  
   search_button = ttk.Button(window, text="Search", command=on_search)
   search_button.grid(column=0, row=8, columnspan=2, pady=10)
+
+  submit_prompt_button = ttk.Button(window, text="Submit", command=on_submit)
+  submit_prompt_button.grid(column=2, row=8, columnspan=2, pady=10)
 
   window.mainloop()
   
