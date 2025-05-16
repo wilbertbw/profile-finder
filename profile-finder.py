@@ -13,47 +13,6 @@ def process_input(input):
 
   return output
 
-def calculate_yoe(profileDict): # not calculating it correctly --> only during nested? (e.g. multiple positions at same company)
-  total_yoe = 0
-
-  for experience in profileDict["experience"]:
-    if experience["deleted"] == 0:
-      if experience["date_to"] != None and experience["duration"] != None:
-        temp = experience["duration"].split(" ")
-        if (len(temp) == 4): # duration has years and months
-          years = int(temp[0])
-          months = int(temp[2])
-          months_in_years = months / 12.0
-          total_yoe = total_yoe + years + months_in_years
-        elif (len(temp) == 2): # duration has only months
-          months = int(temp[0])
-          months_in_years = months / 12.0
-          total_yoe += months_in_years
-      else:
-        if (experience["date_from_month"] != None):
-          current_date = date.today()
-          date_from = date(int(experience["date_from_year"]), int(experience["date_from_month"]), 1)
-          
-          years_diff = current_date.year - date_from.year
-          months_diff = current_date.month - date_from.month
-
-          diff = years_diff + (months_diff / 12.0)
-          
-          total_yoe += diff
-  
-  return total_yoe
-
-def filter_by_yoe(yoe_requirement, profiles):
-  result = [];
-
-  for profile in profiles:
-    yoe = calculate_yoe(profile)
-    if (yoe >= yoe_requirement):
-      result.append(profile)
-  
-  return result
-
-
 def call_coresignal_search_api(input):
   coresignalURL = "https://api.coresignal.com/cdapi/v2/employee_base/search/es_dsl"
 
@@ -168,14 +127,9 @@ def run_profile_finder():
     
     output_box.insert(tk.END, json.dumps(responseDict, indent=2))
 
-    response = call_groq(prompt, json.dumps(responseDict, indent=2))
-    llm_output_box.insert(tk.END, response)
+    response = call_gemini(prompt, json.dumps(responseDict, indent=2))
 
-    # print()
-    # print(responseDict)
-    # print()
-
-    
+    llm_output_box.insert(tk.END, response)  
   
   submit_button = ttk.Button(window, text="Submit", command=on_submit)
   submit_button.grid(column=0, row=8, columnspan=4, pady=10)
