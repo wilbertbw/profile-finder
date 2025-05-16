@@ -132,7 +132,6 @@ def run_profile_finder():
     output_box.delete("1.0", tk.END)
 
     job_title = job_title_entry.get()
-    print(job_title_entry.get())
     location = location_entry.get()
     company =  company_entry.get()
     years_of_experience = yoe_entry.get()
