@@ -95,39 +95,39 @@ def run_profile_finder():
   window = tk.Tk()
   window.title("Profile Finder")
 
-  ttk.Label(window, text="Job Title:").grid(column=0, row=0, sticky=tk.W, padx=5, pady=5)
+  ttk.Label(window, text="Job Title:", font=(24)).grid(column=0, row=0, sticky=tk.W, padx=5, pady=5)
   job_title_entry = ttk.Entry(window, width=40)
   job_title_entry.grid(column=1, row=0, padx=5, pady=5)
 
-  ttk.Label(window, text="Location:").grid(column=0, row=1, sticky=tk.W, padx=5, pady=5)
+  ttk.Label(window, text="Location:", font=(24)).grid(column=0, row=1, sticky=tk.W, padx=5, pady=5)
   location_entry = ttk.Entry(window, width=40)
   location_entry.grid(column=1, row=1, padx=5, pady=5)
 
-  ttk.Label(window, text="Company:").grid(column=0, row=2, sticky=tk.W, padx=5, pady=5)
+  ttk.Label(window, text="Company:", font=(24)).grid(column=0, row=2, sticky=tk.W, padx=5, pady=5)
   company_entry = ttk.Entry(window, width=40)
   company_entry.grid(column=1, row=2, padx=5, pady=5)
 
-  ttk.Label(window, text="Years of Experience:").grid(column=0, row=3, sticky=tk.W, padx=5, pady=5)
+  ttk.Label(window, text="Years of Experience:", font=(24)).grid(column=0, row=3, sticky=tk.W, padx=5, pady=5)
   yoe_entry = ttk.Entry(window, width=40)
   yoe_entry.grid(column=1, row=3, padx=5, pady=5)
 
-  # ttk.Label(window, text="Degree:").grid(column=0, row=4, sticky=tk.W, padx=5, pady=5)
+  # ttk.Label(window, text="Degree:", font=(24)).grid(column=0, row=4, sticky=tk.W, padx=5, pady=5)
   # degree_entry = ttk.Entry(window, width=40)
   # degree_entry.grid(column=1, row=4, padx=5, pady=5)
 
-  ttk.Label(window, text="Major:").grid(column=0, row=5, sticky=tk.W, padx=5, pady=5)
+  ttk.Label(window, text="Major:", font=(24)).grid(column=0, row=5, sticky=tk.W, padx=5, pady=5)
   major_entry = ttk.Entry(window, width=40)
   major_entry.grid(column=1, row=5, padx=5, pady=5)
 
-  ttk.Label(window, text="Education Institution:").grid(column=0, row=6, sticky=tk.W, padx=5, pady=5)
+  ttk.Label(window, text="Education Institution:", font=(24)).grid(column=0, row=6, sticky=tk.W, padx=5, pady=5)
   education_entry = ttk.Entry(window, width=40)
   education_entry.grid(column=1, row=6, padx=5, pady=5)
 
-  ttk.Label(window, text="Skills:").grid(column=0, row=7, sticky=tk.W, padx=5, pady=5)
+  ttk.Label(window, text="Skills:", font=(24)).grid(column=0, row=7, sticky=tk.W, padx=5, pady=5)
   skills_entry = ttk.Entry(window, width=40)
   skills_entry.grid(column=1, row=7, padx=5, pady=5)
 
-  output_box = scrolledtext.ScrolledText(window, width=80, height=15)
+  output_box = scrolledtext.ScrolledText(window, width=80, height=22)
   output_box.grid(column=0, row=9, columnspan=2, padx=5, pady=5)
 
   def on_search():
