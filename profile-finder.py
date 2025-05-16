@@ -127,7 +127,7 @@ def run_profile_finder():
   skills_entry = ttk.Entry(window, width=40)
   skills_entry.grid(column=1, row=7, padx=5, pady=5)
 
-  output_box = scrolledtext.ScrolledText(window, width=80, height=22)
+  output_box = scrolledtext.ScrolledText(window, width=84, height=22)
   output_box.grid(column=0, row=9, columnspan=2, padx=5, pady=5)
 
   def on_search():
@@ -176,6 +176,8 @@ def run_profile_finder():
     if (responseDict.get("message", "all good") != "all good"):
       output_box.insert(tk.END, "No matching profiles found.")
       return
+    
+    output_box.insert(tk.END, json.dumps(responseDict, indent=2))
 
     # print()
     # print(responseDict)
@@ -187,59 +189,59 @@ def run_profile_finder():
     # print(responseDict["skills"])
     # print()
 
-    output_box.insert(tk.END, f"Full Name: {responseDict["full_name"]}\n\n")
-    output_box.insert(tk.END, f"Profile Link: {responseDict["profile_url"]}\n\n")
-    output_box.insert(tk.END, f"Location: {responseDict["location"]}\n\n")
-    output_box.insert(tk.END, "Years of Experience: {:.2f}\n\n".format(calculate_yoe(responseDict)))
+    # output_box.insert(tk.END, f"Full Name: {responseDict["full_name"]}\n\n")
+    # output_box.insert(tk.END, f"Profile Link: {responseDict["profile_url"]}\n\n")
+    # output_box.insert(tk.END, f"Location: {responseDict["location"]}\n\n")
+    # output_box.insert(tk.END, "Years of Experience: {:.2f}\n\n".format(calculate_yoe(responseDict)))
 
-    for experience in responseDict["experience"]:
-      if (experience["deleted"] == 0) and (company.lower().replace(" ", "") in experience["company_name"].lower().replace(" ", "")):
-        if experience["date_to"] != None:
-          if experience["date_from"] == None:
-            output_box.insert(tk.END, f"Company: {experience["company_name"]} (unknown - {experience["date_to"]})\n")
-            output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
-          else:
-            output_box.insert(tk.END, f"Company: {experience["company_name"]} ({experience["date_from"]} - {experience["date_to"]})\n")
-            output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
-        else:
-          if experience["date_from"] == None:
-            output_box.insert(tk.END, f"Company: {experience["company_name"]} (unknown)\n")
-            output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
-          else:
-            output_box.insert(tk.END, f"Company: {experience["company_name"]} ({experience["date_from"]} - present)\n")
-            output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
+    # for experience in responseDict["experience"]:
+    #   if (experience["deleted"] == 0) and (company.lower().replace(" ", "") in experience["company_name"].lower().replace(" ", "")):
+    #     if experience["date_to"] != None:
+    #       if experience["date_from"] == None:
+    #         output_box.insert(tk.END, f"Company: {experience["company_name"]} (unknown - {experience["date_to"]})\n")
+    #         output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
+    #       else:
+    #         output_box.insert(tk.END, f"Company: {experience["company_name"]} ({experience["date_from"]} - {experience["date_to"]})\n")
+    #         output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
+    #     else:
+    #       if experience["date_from"] == None:
+    #         output_box.insert(tk.END, f"Company: {experience["company_name"]} (unknown)\n")
+    #         output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
+    #       else:
+    #         output_box.insert(tk.END, f"Company: {experience["company_name"]} ({experience["date_from"]} - present)\n")
+    #         output_box.insert(tk.END, f"  Job Title: {experience["title"]}\n\n")
 
-    # output_box.insert(tk.END, f"Degree: {degree}\n")
+    # # output_box.insert(tk.END, f"Degree: {degree}\n")
 
-    for education in responseDict["education"]:
-      if (education["deleted"] == 0) and (education_institution.lower().replace(" ", "") in education["institution"].lower().replace(" ", "")):
-        if education["date_to"] != None:
-          if education["date_from"] == None:
-            output_box.insert(tk.END, f"Education Institution: {education["institution"]} (unknown - {education["date_to"]})\n")
-            output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
-          else:
-            output_box.insert(tk.END, f"Education Institution: {education["institution"]} ({education["date_from"]} - {education["date_to"]})\n")
-            output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
-        else:
-          if education["date_from"] == None:
-            output_box.insert(tk.END, f"Education Institution: {education["institution"]} (unknown)\n")
-            output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
-          else:
-            output_box.insert(tk.END, f"Education Institution: {education["institution"]} ({education["date_from"]} - present)\n")
-            output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
+    # for education in responseDict["education"]:
+    #   if (education["deleted"] == 0) and (education_institution.lower().replace(" ", "") in education["institution"].lower().replace(" ", "")):
+    #     if education["date_to"] != None:
+    #       if education["date_from"] == None:
+    #         output_box.insert(tk.END, f"Education Institution: {education["institution"]} (unknown - {education["date_to"]})\n")
+    #         output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
+    #       else:
+    #         output_box.insert(tk.END, f"Education Institution: {education["institution"]} ({education["date_from"]} - {education["date_to"]})\n")
+    #         output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
+    #     else:
+    #       if education["date_from"] == None:
+    #         output_box.insert(tk.END, f"Education Institution: {education["institution"]} (unknown)\n")
+    #         output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
+    #       else:
+    #         output_box.insert(tk.END, f"Education Institution: {education["institution"]} ({education["date_from"]} - present)\n")
+    #         output_box.insert(tk.END, f"  Major: {education["program"]}\n\n")
     
-    skill_str = "Skills: "
-    for i in range(len(responseDict["skills"])):
-      curr_skill = responseDict["skills"][i]
+    # skill_str = "Skills: "
+    # for i in range(len(responseDict["skills"])):
+    #   curr_skill = responseDict["skills"][i]
 
-      if (curr_skill["deleted"] == 1):
-        skill_str += curr_skill["skill"]
-        if (i != len(responseDict["skills"]) - 1):
-          skill_str += ", "
-        else:
-          skill_str += "\n"
+    #   if (curr_skill["deleted"] == 1):
+    #     skill_str += curr_skill["skill"]
+    #     if (i != len(responseDict["skills"]) - 1):
+    #       skill_str += ", "
+    #     else:
+    #       skill_str += "\n"
 
-    output_box.insert(tk.END, skill_str)
+    # output_box.insert(tk.END, skill_str)
   
   search_button = ttk.Button(window, text="Search", command=on_search)
   search_button.grid(column=0, row=8, columnspan=2, pady=10)
