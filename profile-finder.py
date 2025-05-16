@@ -203,9 +203,9 @@ def run_profile_finder():
   yoe_entry = ttk.Entry(window, width=40)
   yoe_entry.grid(column=1, row=3, padx=5, pady=5)
 
-  ttk.Label(window, text="Degree:").grid(column=0, row=4, sticky=tk.W, padx=5, pady=5)
-  degree_entry = ttk.Entry(window, width=40)
-  degree_entry.grid(column=1, row=4, padx=5, pady=5)
+  # ttk.Label(window, text="Degree:").grid(column=0, row=4, sticky=tk.W, padx=5, pady=5)
+  # degree_entry = ttk.Entry(window, width=40)
+  # degree_entry.grid(column=1, row=4, padx=5, pady=5)
 
   ttk.Label(window, text="Major:").grid(column=0, row=5, sticky=tk.W, padx=5, pady=5)
   major_entry = ttk.Entry(window, width=40)
@@ -239,7 +239,7 @@ def run_profile_finder():
     location = location_entry.get()
     company =  company_entry.get()
     years_of_experience = yoe_entry.get()
-    degree = degree_entry.get()
+    # degree = degree_entry.get()
     major = major_entry.get()
     education_institution = education_entry.get()
     skills = skills_entry.get()
@@ -249,7 +249,7 @@ def run_profile_finder():
     currInput.location = location
     currInput.company = company
     currInput.years_of_experience = years_of_experience
-    currInput.degree = degree
+    # currInput.degree = degree
     currInput.major = major
     currInput.education_institution = education_institution
     currInput.skills = skills
