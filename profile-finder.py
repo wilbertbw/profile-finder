@@ -119,7 +119,7 @@ def run_profile_finder():
 
     global profiles
     profiles = []
-    for i in range(1): # change this to the number of profiles to display
+    for i in range(5): # change this to the number of profiles to display
       collectResponse = call_coresignal_collect_api(searchResponse[i])
 
       responseDict = json.loads(collectResponse)
