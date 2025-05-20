@@ -3,18 +3,21 @@
     "name": "Jeff",
     "education": "University of Toronto",
     "experience": "Google",
-    "major": "Computer Engineering"
+    "major": "Computer Engineering",
+    "profile_url": "https://youtube.com"
   },
   {
     "name": "John",
     "education": "University of Toronto",
     "experience": "Meta",
-    "major": "Computer Science"
+    "major": "Computer Science",
+    "profile_url": "https://youtube.com"
   },
   {
     "name": "Luke",
     "education": "University of Waterloo",
     "experience": "Google",
-    "major": "Software Engineering"
+    "major": "Software Engineering",
+    "profile_url": "https://youtube.com"
   }
 ]
