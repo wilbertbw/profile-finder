@@ -6,7 +6,7 @@ with open("example-json-output.json", "r") as json_file, open("output.html", "w"
   json_data = json_file.read()
   json_data_dict = json.loads(json_data)
 
-  for profile in json_data_dict: # HANDLE THE PROFILE URL TO <a> CONVERSION
+  for profile in json_data_dict:
     html = html + "<h3>" + profile["name"] + "</h3>"
     html = html + "<a href=" + profile["profile_url"] + ">LinkedIn Profile</a>"
     html = html + "<p>Experience: " + profile["experience"] + "</p>"
