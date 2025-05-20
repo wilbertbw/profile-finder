@@ -3,8 +3,11 @@ from tkinter import ttk, scrolledtext
 import requests
 import json
 import os
+import time
 from query import build_elasticsearch_query
 from llm import call_openai, call_gemini, call_groq
+
+profiles = []
 
 def process_input(input):
   split_inputs = input.split(',')
@@ -85,9 +88,8 @@ def run_profile_finder():
   llm_output_box = scrolledtext.ScrolledText(window, width=84, height=22)
   llm_output_box.grid(column=2, row=9, columnspan=2, padx=5, pady=5)
 
-  def on_submit():
+  def on_search():
     output_box.delete("1.0", tk.END)
-    llm_output_box.delete("1.0", tk.END)
 
     job_title = job_title_entry.get()
     location = location_entry.get()
@@ -97,7 +99,6 @@ def run_profile_finder():
     major = major_entry.get()
     education_institution = education_entry.get()
     skills = skills_entry.get()
-    prompt = text_area.get("1.0", tk.END)
 
     currInput = { # note: degree is not added here yet
       "job_title": job_title,
@@ -116,8 +117,9 @@ def run_profile_finder():
     searchResponse = searchResponse[1:len(searchResponse) - 1]
     searchResponse = searchResponse.split(",")
 
+    global profiles
     profiles = []
-    for i in range(3): # change this to the number of profiles to display
+    for i in range(1): # change this to the number of profiles to display
       collectResponse = call_coresignal_collect_api(searchResponse[i])
 
       responseDict = json.loads(collectResponse)
@@ -129,13 +131,22 @@ def run_profile_finder():
       output_box.insert(tk.END, json.dumps(responseDict, indent=2))
 
       profiles.append(json.dumps(responseDict, indent=2))
+      time.sleep(2)
+
+  def on_submit():
+    prompt = text_area.get("1.0", tk.END)
+
+    llm_output_box.delete("1.0", tk.END)
 
     response = call_gemini(prompt, "\n".join(profiles))
 
     llm_output_box.insert(tk.END, response)
   
+  search_button = ttk.Button(window, text="Search", command=on_search)
+  search_button.grid(column=0, row=8, columnspan=2, pady=10)
+  
   submit_button = ttk.Button(window, text="Submit", command=on_submit)
-  submit_button.grid(column=0, row=8, columnspan=4, pady=10)
+  submit_button.grid(column=2, row=8, columnspan=2, pady=10)
 
   window.mainloop()
   
