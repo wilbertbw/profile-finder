@@ -1,0 +1,1 @@
+For each of these profiles, can you give a rating out of 10 for their education and experience? Can you also sort the profiles by the education rating? Lastly, can you also add their LinkedIn profile link to your rating output?

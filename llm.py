@@ -6,32 +6,45 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+file = open("default-prompt.txt")
+
 openaiClient = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 geminiClient = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 
 groqClient = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
-
-def call_openai(prompt, profile):
+def call_openai(prompt, profiles):
+  final_prompt = prompt.strip()
+  if prompt.strip() == "":
+    final_prompt = file.read()
+  
   response = openaiClient.responses.create(
     model="gpt-4o-mini",
     input=[
-      {"role": "user", "content": "Here is a person's profile: " + profile + "\n\n" + prompt}
+      {"role": "user", "content": "Here are several profiles in an array: " + profiles + "\n\n" + final_prompt}
     ]
   )
 
   return response.output_text
 
-def call_gemini(prompt, profile):
-  query = "Here is a person's profile: " + profile + "\n\n" + prompt
+def call_gemini(prompt, profiles):
+  final_prompt = prompt.strip()
+  if prompt.strip() == "":
+    final_prompt = file.read()
+
+  query = "Here are several profiles in an array: " + profiles + "\n\n" + final_prompt
   
   response = geminiClient.models.generate_content(model = "gemini-2.0-flash", contents = query)
 
   return response.text
 
-def call_groq(prompt, profile):
-  query = "Here is a person's profile: " + profile + "\n\n" + prompt
+def call_groq(prompt, profiles):
+  final_prompt = prompt.strip()
+  if prompt.strip() == "":
+    final_prompt = file.read()
+  
+  query = "Here are several profiles in an array: " + profiles + "\n\n" + final_prompt
 
   chat_completion = groqClient.chat.completions.create(
     messages=[

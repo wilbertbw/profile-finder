@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk, scrolledtext
-from datetime import date
 import requests
 import json
 import os
@@ -83,7 +82,7 @@ def run_profile_finder():
   output_box = scrolledtext.ScrolledText(window, width=84, height=22)
   output_box.grid(column=0, row=9, columnspan=2, padx=5, pady=5)
 
-  llm_output_box = scrolledtext.ScrolledText(window, width=72, height=22)
+  llm_output_box = scrolledtext.ScrolledText(window, width=84, height=22)
   llm_output_box.grid(column=2, row=9, columnspan=2, padx=5, pady=5)
 
   def on_submit():
@@ -117,19 +116,23 @@ def run_profile_finder():
     searchResponse = searchResponse[1:len(searchResponse) - 1]
     searchResponse = searchResponse.split(",")
 
-    collectResponse = call_coresignal_collect_api(searchResponse[0])
+    profiles = []
+    for i in range(3): # change this to the number of profiles to display
+      collectResponse = call_coresignal_collect_api(searchResponse[i])
 
-    responseDict = json.loads(collectResponse)
+      responseDict = json.loads(collectResponse)
 
-    if (responseDict.get("message", "all good") != "all good"):
-      output_box.insert(tk.END, "No matching profiles found.")
-      return
+      if (responseDict.get("message", "all good") != "all good"):
+        output_box.insert(tk.END, "No matching profiles found.")
+        return
     
-    output_box.insert(tk.END, json.dumps(responseDict, indent=2))
+      output_box.insert(tk.END, json.dumps(responseDict, indent=2))
 
-    response = call_gemini(prompt, json.dumps(responseDict, indent=2))
+      profiles.append(json.dumps(responseDict, indent=2))
 
-    llm_output_box.insert(tk.END, response)  
+    response = call_gemini(prompt, "\n".join(profiles))
+
+    llm_output_box.insert(tk.END, response)
   
   submit_button = ttk.Button(window, text="Submit", command=on_submit)
   submit_button.grid(column=0, row=8, columnspan=4, pady=10)
