@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Jeff",
+    "education": "University of Toronto",
+    "experience": "Google",
+    "major": "Computer Engineering"
+  },
+  {
+    "name": "John",
+    "education": "University of Toronto",
+    "experience": "Meta",
+    "major": "Computer Science"
+  },
+  {
+    "name": "Luke",
+    "education": "University of Waterloo",
+    "experience": "Google",
+    "major": "Software Engineering"
+  }
+]
