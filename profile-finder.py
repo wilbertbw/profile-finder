@@ -144,7 +144,7 @@ def call_llm(prompt, profiles):
   
 def main():
   spec_filename = input("Specifications filename (.txt): ")
-  prompt_filename = input("Input filename (.txt file or default-prompt.txt): ")
+  prompt_filename = input("Prompt filename (.txt file or default-prompt.txt): ")
 
   specs_dict = read_spec_file(spec_filename)
   profiles = search_profile(specs_dict)
