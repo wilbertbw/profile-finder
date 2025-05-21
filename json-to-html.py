@@ -12,7 +12,7 @@ with open("example-json-output.json", "r") as json_file, open("output.html", "w"
         html = html + f"<a href={value}>LinkedIn Profile</a>"
       else:
         html = html + f"<p>{key}: {value}<p>"
-    html += "<br></br>"
+    html += "<br>=======================================================================</br>"
 
   html += "</body></html>"
 

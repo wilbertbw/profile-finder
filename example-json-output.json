@@ -1,20 +1,32 @@
 [
   {
-    "name": "Jeff",
-    "education": "Bachelor of Computer Engineering at the University of Toronto, 9/10",
-    "experience": "Senior Software Engineer at Google, 10/10",
-    "LinkedIn": "https://youtube.com"
+    "decision": "yes",
+    "why": "Efe Tascioglu has a strong technical background (Engineering Science at UofT), relevant experience (Amazon, Huawei Canada), and a history of entrepreneurial activities (Tunescape). His current focus on Machine Learning makes him a good fit for Antler's investment thesis.",
+    "LinkedIn": "https://www.linkedin.com/in/efe-tascioglu-b40945192",
+    "message": "Efe, your experience at Amazon and Huawei, combined with your entrepreneurial spirit at Tunescape, is truly impressive. We're building something special at Antler and would love to chat about how we could support your next venture!"
   },
   {
-    "name": "John",
-    "education": "Bachelor of Computer Science at the University of Toronto, 9/10",
-    "experience": "Software Engineer at Meta, 9/10",
-    "LinkedIn": "https://youtube.com"
+    "decision": "yes",
+    "why": "Meet S. has a strong background in Cloud computing and AWS certifications. His experience at OnX and Arihant eSolutions and his wide breadth of certifications are all a positive sign. His headline indicates a strong entrepreneurial interest.",
+    "LinkedIn": "https://www.linkedin.com/in/meetjain",
+    "message": "Meet, your cloud architecture experience and impressive array of certifications are truly remarkable. At Antler, we are always on the lookout for ambitious technical founders, and would love to discuss how we can help you build your next company!"
   },
   {
-    "name": "Luke",
-    "education": "Bachelor of Software Engineering at the University of Waterloo, 9/10",
-    "experience": "Software Engineer at Google, 9/10",
-    "LinkedIn": "https://youtube.com"
+    "decision": "no",
+    "why": "Arnaud Viala is an experienced Embedded Software Developer. While his background is strong, his profile does not indicate a founding or entrepreneurial interest. Additionally, his current role at ecobee does not suggest immediate availability for a new venture.",
+    "LinkedIn": "https://www.linkedin.com/in/arnaudviala",
+    "message": null
+  },
+  {
+    "decision": "no",
+    "why": "Daniel Kapitolnik has a consistent work history. However, his current headline mentions that he is 'unemployed at this time' and his experience is less obviously impressive than Efe or Meet. Furthermore, he does not have any founding experience.",
+    "LinkedIn": "https://www.linkedin.com/in/daniel-kapitolnik-3724bb186",
+    "message": null
+  },
+  {
+    "decision": "no",
+    "why": "Rohit K's headline suggests he is currently unemployed. He does not have a lot of experience and his profile does not indicate a founding or entrepreneurial interest.",
+    "LinkedIn": "https://www.linkedin.com/in/rohit-k-5a69522b5",
+    "message": null
   }
 ]
