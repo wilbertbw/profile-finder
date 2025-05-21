@@ -49,12 +49,6 @@ def store_in_cache(profile_id, profile_dict):
   
   return
 
-def process_input(input):
-  split_inputs = input.split(',')
-  output = [split_input.strip() for split_input in split_inputs]
-
-  return output
-
 def call_coresignal_search_api(input):
   coresignalURL = "https://api.coresignal.com/cdapi/v2/employee_base/search/es_dsl"
 
