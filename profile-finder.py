@@ -6,6 +6,7 @@ import os
 import time
 from query import build_elasticsearch_query
 from llm import call_openai, call_gemini, call_groq
+from convert import convertJSONToHTML
 
 def check_in_cache(profile_id):
   with open("cache.json", "r") as file:
@@ -195,6 +196,8 @@ def run_profile_finder():
     llm_output_box.delete("1.0", tk.END)
 
     response = call_gemini(prompt, "\n".join(profiles))
+
+    convertJSONToHTML(response)
 
     llm_output_box.insert(tk.END, response)
   
