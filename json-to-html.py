@@ -11,7 +11,6 @@ with open("example-json-output.json", "r") as json_file, open("output.html", "w"
     html = html + "<a href=" + profile["profile_url"] + ">LinkedIn Profile</a>"
     html = html + "<p>Experience: " + profile["experience"] + "</p>"
     html = html + "<p>Education: " + profile["education"] + "</p>"
-    html = html + "<p>Major: " + profile["major"] + "</p>"
 
   html += "</body></html>"
 

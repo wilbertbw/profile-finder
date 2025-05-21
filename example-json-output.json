@@ -1,23 +1,20 @@
 [
   {
     "name": "Jeff",
-    "education": "University of Toronto",
-    "experience": "Google",
-    "major": "Computer Engineering",
+    "education": "Bachelor of Computer Engineering at the University of Toronto, 9/10",
+    "experience": "Senior Software Engineer at Google, 10/10",
     "profile_url": "https://youtube.com"
   },
   {
     "name": "John",
-    "education": "University of Toronto",
-    "experience": "Meta",
-    "major": "Computer Science",
+    "education": "Bachelor of Computer Science at the University of Toronto, 9/10",
+    "experience": "Software Engineer at Meta, 9/10",
     "profile_url": "https://youtube.com"
   },
   {
     "name": "Luke",
-    "education": "University of Waterloo",
-    "experience": "Google",
-    "major": "Software Engineering",
+    "education": "Bachelor of Software Engineering at the University of Waterloo, 9/10",
+    "experience": "Software Engineer at Google, 9/10",
     "profile_url": "https://youtube.com"
   }
 ]
