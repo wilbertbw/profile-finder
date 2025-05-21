@@ -117,15 +117,20 @@ def run_profile_finder():
   skills_entry = ttk.Entry(window, width=40)
   skills_entry.grid(column=1, row=7, padx=5, pady=5)
 
+  ttk.Label(window, text="Profiles to Search:", font=(24)).grid(column=0, row=8, sticky=tk.W, padx=5, pady=5)
+  num_profile_entry = ttk.Entry(window, width=40)
+  num_profile_entry.grid(column=1, row=8, padx=5, pady=5)
+  num_profile_entry.insert(0, "5")
+
   ttk.Label(window, text="Prompt:", font=(24)).grid(column=2, row=3, sticky=tk.W, padx=5, pady=5)
   text_area = tk.Text(window, width=54, height=4)
   text_area.grid(column=3, row=3, sticky=tk.W, padx=5, pady=5)
 
   output_box = scrolledtext.ScrolledText(window, width=84, height=22)
-  output_box.grid(column=0, row=9, columnspan=2, padx=5, pady=5)
+  output_box.grid(column=0, row=10, columnspan=2, padx=5, pady=5)
 
   llm_output_box = scrolledtext.ScrolledText(window, width=84, height=22)
-  llm_output_box.grid(column=2, row=9, columnspan=2, padx=5, pady=5)
+  llm_output_box.grid(column=2, row=10, columnspan=2, padx=5, pady=5)
 
   def on_search():
     output_box.delete("1.0", tk.END)
@@ -138,15 +143,16 @@ def run_profile_finder():
     major = major_entry.get()
     education_institution = education_entry.get()
     skills = skills_entry.get()
+    num_profiles = num_profile_entry.get()
 
     currInput = { # note: degree is not added here yet
-      "job_title": job_title,
-      "location": location,
-      "company": company,
-      "years_of_experience": years_of_experience,
-      "major": major,
-      "education_institution": education_institution,
-      "skills": skills
+      "job_title": job_title.strip(),
+      "location": location.strip(),
+      "company": company.strip(),
+      "years_of_experience": years_of_experience.strip(),
+      "major": major.strip(),
+      "education_institution": education_institution.strip(),
+      "skills": skills.strip()
     }
 
     searchResponse = call_coresignal_search_api(currInput)
@@ -158,7 +164,7 @@ def run_profile_finder():
 
     global profiles
     profiles = []
-    for i in range(5): # change this to the number of profiles to display
+    for i in range(int(num_profiles)):
       profile = check_in_cache(searchResponse[i])
       if profile != None: # check if available in cache
         profiles.append(profile)
@@ -193,10 +199,10 @@ def run_profile_finder():
     llm_output_box.insert(tk.END, response)
   
   search_button = ttk.Button(window, text="Search", command=on_search)
-  search_button.grid(column=0, row=8, columnspan=2, pady=10)
+  search_button.grid(column=0, row=9, columnspan=2, pady=10)
   
   submit_button = ttk.Button(window, text="Submit", command=on_submit)
-  submit_button.grid(column=2, row=8, columnspan=2, pady=10)
+  submit_button.grid(column=2, row=9, columnspan=2, pady=10)
 
   window.mainloop()
   
