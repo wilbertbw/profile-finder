@@ -6,8 +6,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-file = open("default-prompt.txt")
-
 openaiClient = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 geminiClient = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
@@ -15,6 +13,8 @@ geminiClient = genai.Client(api_key=os.environ.get("GEMINI_API_KEY"))
 groqClient = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 def call_openai(prompt, profiles):
+  file = open("default-prompt.txt")
+
   final_prompt = prompt.strip()
   if prompt.strip() == "":
     final_prompt = file.read()
@@ -26,9 +26,13 @@ def call_openai(prompt, profiles):
     ]
   )
 
+  file.close()
+
   return response.output_text
 
 def call_gemini(prompt, profiles):
+  file = open("default-prompt.txt")
+
   final_prompt = prompt.strip()
   if prompt.strip() == "":
     final_prompt = file.read()
@@ -37,9 +41,13 @@ def call_gemini(prompt, profiles):
   
   response = geminiClient.models.generate_content(model = "gemini-2.0-flash", contents = query)
 
+  file.close()
+
   return response.text
 
 def call_groq(prompt, profiles):
+  file = open("default-prompt.txt")
+
   final_prompt = prompt.strip()
   if prompt.strip() == "":
     final_prompt = file.read()
@@ -59,5 +67,7 @@ def call_groq(prompt, profiles):
     ],
     model="meta-llama/llama-4-scout-17b-16e-instruct",
   )
+
+  file.close()
   
   return chat_completion.choices[0].message.content
