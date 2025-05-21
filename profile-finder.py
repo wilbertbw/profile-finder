@@ -158,7 +158,7 @@ def run_profile_finder():
 
     global profiles
     profiles = []
-    for i in range(3): # change this to the number of profiles to display
+    for i in range(5): # change this to the number of profiles to display
       profile = check_in_cache(searchResponse[i])
       if profile != None: # check if available in cache
         profiles.append(profile)
