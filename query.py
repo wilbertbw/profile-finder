@@ -103,7 +103,7 @@ def build_elasticsearch_query(input):
                                 }
                             },
                             {
-                                "match": {
+                                "match_phrase": {
                                     "education.program": input['major']
                                 }
                             },
