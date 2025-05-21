@@ -195,11 +195,11 @@ def run_profile_finder():
 
     llm_output_box.delete("1.0", tk.END)
 
-    response = call_gemini(prompt, "\n".join(profiles))
+    responses = call_gemini(prompt, profiles)
 
-    convertJSONToHTML(response)
+    convertJSONToHTML(responses)
 
-    llm_output_box.insert(tk.END, response)
+    llm_output_box.insert(tk.END, json.dumps(responses, indent=2))
   
   search_button = ttk.Button(window, text="Search", command=on_search)
   search_button.grid(column=0, row=9, columnspan=2, pady=10)

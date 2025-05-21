@@ -1,11 +1,7 @@
 import json
 
-def convertJSONToHTML(llm_output):
-  llm_output = llm_output[8:-4] # remove the ```json at the start and the ``` at the end of the LLM response
-
+def convertJSONToHTML(profiles):
   html = "<html><head><title>Output</title></head><body>"
-
-  profiles = json.loads(llm_output)
 
   with open("output.html", "w") as output_file:
     for profile in profiles:

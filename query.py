@@ -6,7 +6,7 @@ def build_elasticsearch_query(input):
     
     if input.get('location'):
         must_clauses.append({
-            "match": {
+            "match_phrase": {
                 "location": input['location']
             }
         })
