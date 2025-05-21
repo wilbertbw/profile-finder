@@ -152,7 +152,8 @@ def main():
   prompt = read_prompt_file(prompt_filename)
   call_llm(prompt, profiles)
 
-  print("Process finished. Raw search outputs are in search_output.json and the LLM outputs are in llm_output.json.")
+  print("\nProcess finished. Raw search outputs are in search_output.json and the raw LLM output is in llm_output.json.")
+  print("The LLM output can also be viewed on output.html.")
 
   return
 
