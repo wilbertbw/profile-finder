@@ -3,3 +3,4 @@ cache.json
 *.pyc
 search_output.json
 llm_output.json
+output.html
