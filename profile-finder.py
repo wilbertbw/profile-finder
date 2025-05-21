@@ -1,5 +1,3 @@
-import tkinter as tk
-from tkinter import ttk, scrolledtext
 import requests
 import json
 import os
@@ -20,7 +18,7 @@ def check_in_cache(profile_id):
 
       if (contents_dict.get(key)): # profile in cache
         print("Profile retrieved from cache")
-        return json.dumps(contents_dict.get(key), indent=2)      
+        return contents_dict.get(key)
       else: # profile not in cache
         return None
 
@@ -76,135 +74,87 @@ def call_coresignal_collect_api(profile_id):
 
   return response.text
 
-def run_profile_finder():
-  window = tk.Tk()
-  window.title("Profile Finder")
+def read_spec_file(filename):
+  file = open(filename)
+  contents = file.read()
+  contents_dict = json.loads(contents)
 
-  ttk.Label(window, text="Job Title:", font=(24)).grid(column=0, row=0, sticky=tk.W, padx=5, pady=5)
-  job_title_entry = ttk.Entry(window, width=40)
-  job_title_entry.grid(column=1, row=0, padx=5, pady=5)
+  return contents_dict
 
-  ttk.Label(window, text="Location:", font=(24)).grid(column=0, row=1, sticky=tk.W, padx=5, pady=5)
-  location_entry = ttk.Entry(window, width=40)
-  location_entry.grid(column=1, row=1, padx=5, pady=5)
+def read_prompt_file(filename):
+  file = open(filename)
+  contents = file.read()
+  
+  return contents
 
-  ttk.Label(window, text="Company:", font=(24)).grid(column=0, row=2, sticky=tk.W, padx=5, pady=5)
-  company_entry = ttk.Entry(window, width=40)
-  company_entry.grid(column=1, row=2, padx=5, pady=5)
+def search_profile(input_dict):
+  currInput = {
+    "job_title": input_dict["job_title"],
+    "location": input_dict["location"],
+    "company": input_dict["company"],
+    "years_of_experience": input_dict["years_of_experience"],
+    "major": input_dict["major"],
+    "education_institution": input_dict["education_institution"],
+    "skills": input_dict["skills"]
+  }
+  num_profiles = input_dict["num_profiles"]
 
-  ttk.Label(window, text="Years of Experience:", font=(24)).grid(column=0, row=3, sticky=tk.W, padx=5, pady=5)
-  yoe_entry = ttk.Entry(window, width=40)
-  yoe_entry.grid(column=1, row=3, padx=5, pady=5)
+  searchResponse = call_coresignal_search_api(currInput)
 
-  # ttk.Label(window, text="Degree:", font=(24)).grid(column=0, row=4, sticky=tk.W, padx=5, pady=5)
-  # degree_entry = ttk.Entry(window, width=40)
-  # degree_entry.grid(column=1, row=4, padx=5, pady=5)
+  print(searchResponse)
 
-  ttk.Label(window, text="Major:", font=(24)).grid(column=0, row=5, sticky=tk.W, padx=5, pady=5)
-  major_entry = ttk.Entry(window, width=40)
-  major_entry.grid(column=1, row=5, padx=5, pady=5)
+  searchResponse = searchResponse[1:len(searchResponse) - 1]
+  searchResponse = searchResponse.split(",")
 
-  ttk.Label(window, text="Education Institution:", font=(24)).grid(column=0, row=6, sticky=tk.W, padx=5, pady=5)
-  education_entry = ttk.Entry(window, width=40)
-  education_entry.grid(column=1, row=6, padx=5, pady=5)
-
-  ttk.Label(window, text="Skills:", font=(24)).grid(column=0, row=7, sticky=tk.W, padx=5, pady=5)
-  skills_entry = ttk.Entry(window, width=40)
-  skills_entry.grid(column=1, row=7, padx=5, pady=5)
-
-  ttk.Label(window, text="Profiles to Search:", font=(24)).grid(column=0, row=8, sticky=tk.W, padx=5, pady=5)
-  num_profile_entry = ttk.Entry(window, width=40)
-  num_profile_entry.grid(column=1, row=8, padx=5, pady=5)
-  num_profile_entry.insert(0, "5")
-
-  ttk.Label(window, text="Prompt:", font=(24)).grid(column=2, row=3, sticky=tk.W, padx=5, pady=5)
-  text_area = tk.Text(window, width=54, height=4)
-  text_area.grid(column=3, row=3, sticky=tk.W, padx=5, pady=5)
-
-  output_box = scrolledtext.ScrolledText(window, width=84, height=22)
-  output_box.grid(column=0, row=10, columnspan=2, padx=5, pady=5)
-
-  llm_output_box = scrolledtext.ScrolledText(window, width=84, height=22)
-  llm_output_box.grid(column=2, row=10, columnspan=2, padx=5, pady=5)
-
-  def on_search():
-    output_box.delete("1.0", tk.END)
-
-    job_title = job_title_entry.get()
-    location = location_entry.get()
-    company =  company_entry.get()
-    years_of_experience = yoe_entry.get()
-    # degree = degree_entry.get()
-    major = major_entry.get()
-    education_institution = education_entry.get()
-    skills = skills_entry.get()
-    num_profiles = num_profile_entry.get()
-
-    currInput = { # note: degree is not added here yet
-      "job_title": job_title.strip(),
-      "location": location.strip(),
-      "company": company.strip(),
-      "years_of_experience": years_of_experience.strip(),
-      "major": major.strip(),
-      "education_institution": education_institution.strip(),
-      "skills": skills.strip()
-    }
-
-    searchResponse = call_coresignal_search_api(currInput)
+  profiles = []
+  for i in range(int(num_profiles)):
+    profile = check_in_cache(searchResponse[i])
+    if profile != None: # check if available in cache
+      profiles.append(profile)
+      continue
     
-    print(searchResponse)
+    else:
+      print("Profile retrieved from Coresignal")
+      collectResponse = call_coresignal_collect_api(searchResponse[i])
 
-    searchResponse = searchResponse[1:len(searchResponse) - 1]
-    searchResponse = searchResponse.split(",")
+      responseDict = json.loads(collectResponse)
 
-    global profiles
-    profiles = []
-    for i in range(int(num_profiles)):
-      profile = check_in_cache(searchResponse[i])
-      if profile != None: # check if available in cache
-        profiles.append(profile)
+      if (responseDict.get("message", "all good") != "all good"):
+        print("No matching profiles found.")
+        return
 
-        output_box.insert(tk.END, profile)
-        continue
+      profiles.append(responseDict)
+      store_in_cache(responseDict["id"], responseDict)
       
-      else:
-        print("Profile retrieved from Coresignal")
-        collectResponse = call_coresignal_collect_api(searchResponse[i])
-
-        responseDict = json.loads(collectResponse)
-
-        if (responseDict.get("message", "all good") != "all good"):
-          output_box.insert(tk.END, "No matching profiles found.")
-          return
-      
-        output_box.insert(tk.END, json.dumps(responseDict, indent=2))
-
-        profiles.append(json.dumps(responseDict, indent=2))
-        store_in_cache(responseDict["id"], responseDict)
-        
-        time.sleep(2)
-
-  def on_submit():
-    prompt = text_area.get("1.0", tk.END)
-
-    llm_output_box.delete("1.0", tk.END)
-
-    responses = call_gemini(prompt, profiles)
-
-    convertJSONToHTML(responses)
-
-    llm_output_box.insert(tk.END, json.dumps(responses, indent=2))
+      time.sleep(2)
   
-  search_button = ttk.Button(window, text="Search", command=on_search)
-  search_button.grid(column=0, row=9, columnspan=2, pady=10)
+  with open("search_output.json", "w") as file:
+    file.write(json.dumps(profiles, indent=2))
   
-  submit_button = ttk.Button(window, text="Submit", command=on_submit)
-  submit_button.grid(column=2, row=9, columnspan=2, pady=10)
+  return profiles
 
-  window.mainloop()
+def call_llm(prompt, profiles):
+  responses = call_gemini(prompt, profiles)
+  convertJSONToHTML(responses)
+
+  with open("llm_output.json", "w") as file:
+    file.write(json.dumps(responses, indent=2))
+
+  return
   
 def main():
-  run_profile_finder()
+  spec_filename = input("Specifications filename (.txt): ")
+  prompt_filename = input("Input filename (.txt file or default-prompt.txt): ")
+
+  specs_dict = read_spec_file(spec_filename)
+  profiles = search_profile(specs_dict)
+
+  prompt = read_prompt_file(prompt_filename)
+  call_llm(prompt, profiles)
+
+  print("Process finished. Raw search outputs are in search_output.json and the LLM outputs are in llm_output.json.")
+
+  return
 
 if __name__ == "__main__":
   main()

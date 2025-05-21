@@ -42,7 +42,7 @@ def call_gemini(prompt, profiles):
     final_prompt = file.read()
   
   for profile in profiles:
-    query = "Here is a profile:\n" + profile + "\n\n" + final_prompt
+    query = "Here is a profile:\n" + json.dumps(profile) + "\n\n" + final_prompt
   
     response = geminiClient.models.generate_content(model = "gemini-2.0-flash", contents = query)
 
