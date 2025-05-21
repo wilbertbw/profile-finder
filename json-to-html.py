@@ -7,10 +7,12 @@ with open("example-json-output.json", "r") as json_file, open("output.html", "w"
   json_data_dict = json.loads(json_data)
 
   for profile in json_data_dict:
-    html = html + "<h3>" + profile["name"] + "</h3>"
-    html = html + "<a href=" + profile["profile_url"] + ">LinkedIn Profile</a>"
-    html = html + "<p>Experience: " + profile["experience"] + "</p>"
-    html = html + "<p>Education: " + profile["education"] + "</p>"
+    for key, value in profile.items():
+      if key == "LinkedIn":
+        html = html + f"<a href={value}>LinkedIn Profile</a>"
+      else:
+        html = html + f"<p>{key}: {value}<p>"
+    html += "<br></br>"
 
   html += "</body></html>"
 
