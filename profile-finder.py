@@ -7,7 +7,46 @@ import time
 from query import build_elasticsearch_query
 from llm import call_openai, call_gemini, call_groq
 
-profiles = []
+def check_in_cache(profile_id):
+  with open("cache.json", "r") as file:
+    contents = file.read()
+
+    if contents.strip() == "": # file empty
+      return None
+    else: # file not empty
+      key = f"{profile_id}"
+      contents_dict = json.loads(contents)
+
+      if (contents_dict.get(key)): # profile in cache
+        print("Profile retrieved from cache")
+        return json.dumps(contents_dict.get(key), indent=2)      
+      else: # profile not in cache
+        return None
+
+
+def store_in_cache(profile_id, profile_dict):
+  with open("cache.json", "r") as file:
+    contents = file.read()
+  
+  if contents.strip() == "": # when file is empty
+    with open("cache.json", "w") as file:
+      dict_to_write = {}
+      key = f"{profile_id}"
+      dict_to_write[key] = profile_dict
+      
+      json_format = json.dumps(dict_to_write, indent=2)
+      file.write(json_format)
+
+  else: # when file is not empty
+    with open("cache.json", "w") as file:
+      contents_dict = json.loads(contents)
+      key = f"{profile_id}"
+      contents_dict[key] = profile_dict
+
+      json_format = json.dumps(contents_dict, indent=2)
+      file.write(json_format)
+  
+  return
 
 def process_input(input):
   split_inputs = input.split(',')
@@ -119,19 +158,30 @@ def run_profile_finder():
 
     global profiles
     profiles = []
-    for i in range(5): # change this to the number of profiles to display
-      collectResponse = call_coresignal_collect_api(searchResponse[i])
+    for i in range(3): # change this to the number of profiles to display
+      profile = check_in_cache(searchResponse[i])
+      if profile != None: # check if available in cache
+        profiles.append(profile)
 
-      responseDict = json.loads(collectResponse)
+        output_box.insert(tk.END, profile)
+        continue
+      
+      else:
+        print("Profile retrieved from Coresignal")
+        collectResponse = call_coresignal_collect_api(searchResponse[i])
 
-      if (responseDict.get("message", "all good") != "all good"):
-        output_box.insert(tk.END, "No matching profiles found.")
-        return
-    
-      output_box.insert(tk.END, json.dumps(responseDict, indent=2))
+        responseDict = json.loads(collectResponse)
 
-      profiles.append(json.dumps(responseDict, indent=2))
-      time.sleep(2)
+        if (responseDict.get("message", "all good") != "all good"):
+          output_box.insert(tk.END, "No matching profiles found.")
+          return
+      
+        output_box.insert(tk.END, json.dumps(responseDict, indent=2))
+
+        profiles.append(json.dumps(responseDict, indent=2))
+        store_in_cache(responseDict["id"], responseDict)
+        
+        time.sleep(2)
 
   def on_submit():
     prompt = text_area.get("1.0", tk.END)
