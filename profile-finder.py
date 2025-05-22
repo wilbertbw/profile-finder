@@ -4,7 +4,6 @@ import os
 import time
 from query import build_elasticsearch_query
 from llm import call_openai, call_gemini, call_groq
-from convert import convertJSONToHTML
 
 def check_in_cache(profile_id):
   with open("cache.json", "r") as file:
@@ -135,7 +134,6 @@ def search_profile(input_dict):
 
 def call_llm(prompt, profiles):
   responses = call_gemini(prompt, profiles)
-  convertJSONToHTML(responses)
 
   with open("llm_output.json", "w") as file:
     file.write(json.dumps(responses, indent=2))
@@ -143,6 +141,9 @@ def call_llm(prompt, profiles):
   return
   
 def main():
+  file = open("output.html", "w")
+  file.close()
+
   spec_filename = input("Specifications filename (.txt): ")
   prompt_filename = input("Prompt filename (.txt file or default-prompt.txt): ")
 

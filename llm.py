@@ -5,6 +5,7 @@ import os
 import time
 import json
 from dotenv import load_dotenv
+from convert import convertJSONToHTML
 
 load_dotenv()
 
@@ -54,12 +55,10 @@ def call_gemini(prompt, profiles):
 
   
   attempt = 1
-  for profile in profiles:
-    query = "Here is a profile:\n" + json.dumps(profile) + "\n\n" + final_prompt
+  for i in range(len(profiles)):
+    query = "Here is a profile:\n" + json.dumps(profiles[i]) + "\n\n" + final_prompt
     try:
       response = geminiClient.models.generate_content(model = "gemini-2.0-flash", contents = query)
-
-      print(response)
 
       response_text = response.text
 
@@ -76,6 +75,10 @@ def call_gemini(prompt, profiles):
         response_dict = json.loads(response_text)
 
       responses.append(response_dict)
+
+      convertJSONToHTML(response_dict)
+
+      print(f"Profile {i + 1} processed.")
 
       time.sleep(5)
     
@@ -105,6 +108,10 @@ def call_gemini(prompt, profiles):
         response_dict = json.loads(response_text)
 
       responses.append(response_dict)
+
+      convertJSONToHTML(response_dict)
+
+      print(f"Profile {i + 1} processed.")
 
       time.sleep(5)
 
